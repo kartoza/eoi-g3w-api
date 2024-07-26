@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import APIException
 
+from core.models import Group as ProjectGroup
 from qps_timeseries.models import QpsTimeseriesProject
 from .permissions import (
     GetProjectPermission,
@@ -23,13 +24,13 @@ class QpsTimeseriesGetProjectApiView(G3WAPIView):
 
     def get(self, request, *args, **kwargs):
         try:
-            qps_ts_project = QpsTimeseriesProject.objects.get(project__title=kwargs['project_title'])
+            qps_ts_project = QpsTimeseriesProject.objects.get(project__title=kwargs['project_name'])
         except ObjectDoesNotExist:
             raise APIException('QpsTimeseriesProject object not found in DB')
 
         results = {
             "id": qps_ts_project.id,
-            "title": kwargs['project_title'],
+            "name": kwargs['project_name'],
         }
 
         return Response(results)
@@ -72,6 +73,28 @@ class GetOrCreateGroup(G3WAPIView):
         result = {
             "id": group.id,
             "name": group.name
+        }
+
+        return Response(result)
+
+
+class GetProjectGroup(G3WAPIView):
+    """
+    API for getting Project Group
+    """
+
+    permission_classes = (
+        GetCreateGroupPermission,
+    )
+
+    def get(self, request, *args, **kwargs):
+        group = get_object_or_404(ProjectGroup, name=kwargs['group_name'])
+
+        result = {
+            "id": group.id,
+            "name": group.name,
+            "title": group.title,
+            "slug": group.slug,
         }
 
         return Response(result)

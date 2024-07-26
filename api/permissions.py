@@ -11,8 +11,9 @@ class GetProjectPermission(BasePermission):
     def has_permission(self, request, view):
 
         try:
-
-            qpsts = QpsTimeseriesProject.objects.get(project__title=view.kwargs['project_title'])
+            if request.user.is_superuser:
+                return True
+            qpsts = QpsTimeseriesProject.objects.get(project__name=view.kwargs['project_name'])
 
             return request.user.has_perm('qdjango.view_project', qpsts.project)
 
