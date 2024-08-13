@@ -5,6 +5,14 @@ import logging
 
 logger = logging.getLogger('g3w_api')
 
+
+class BaseSuperuserPermission(BasePermission):
+    """ Check permission for getting or creating Group """
+
+    def has_permission(self, request, view):
+        return request.user.is_superuser
+
+
 class GetProjectPermission(BasePermission):
     """ Check permission for getting QPS Time Series Project """
 
@@ -47,3 +55,9 @@ class GetCreateGroupPermission(BasePermission):
         except Exception as e:
             logger.debug(f'Get User: {e}')
             return False
+
+
+
+class UpdateProjectPermission(BaseSuperuserPermission):
+    """ Check permission for updating Project """
+    pass

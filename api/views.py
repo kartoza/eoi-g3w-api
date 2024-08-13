@@ -2,14 +2,17 @@ from core.api.base.views import G3WAPIView, Response
 from django.contrib.auth.models import User, Group
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
+from rest_framework import status
 from rest_framework.exceptions import APIException
 
 from core.models import Group as ProjectGroup
+from qdjango.models import Project
 from qps_timeseries.models import QpsTimeseriesProject
 from .permissions import (
     GetProjectPermission,
     GetUserPermission,
-    GetCreateGroupPermission
+    GetCreateGroupPermission,
+    UpdateProjectPermission
 )
 
 
@@ -98,3 +101,30 @@ class GetProjectGroup(G3WAPIView):
         }
 
         return Response(result)
+
+
+class UpdateProjectTitle(G3WAPIView):
+    """
+    API for updating Project
+    """
+
+    permission_classes = (
+        UpdateProjectPermission,
+    )
+
+
+    def patch(self, request, *args, **kwargs):
+        project_group_slug = kwargs['project_group_slug']
+        project_slug = kwargs['project_slug']
+        try:
+            project = Project.objects.get(
+                slug=project_slug,
+                group__slug=project_group_slug
+            )
+        except Project.DoesNotExist:
+            return Response({'message': 'Project not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        project.title = request.data['title']
+        project.save()
+
+        return Response({'message': 'Updated'})

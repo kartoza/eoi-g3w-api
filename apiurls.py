@@ -4,7 +4,8 @@ from .api.views import (
     QpsTimeseriesGetProjectApiView,
     GetUser,
     GetOrCreateGroup,
-    GetProjectGroup
+    GetProjectGroup,
+    UpdateProjectTitle
 )
 
 
@@ -32,6 +33,11 @@ urlpatterns = [
         'api/get-project-group/<str:group_name>',
         GetProjectGroup.as_view(),
         name='get-project-group'
+    ),
+    path(
+        'api/update-project-title/<str:project_group_slug>/<str:project_slug>',
+        UpdateProjectTitle.as_view(),
+        name='update-project-slug'
     ),
 
 ]
