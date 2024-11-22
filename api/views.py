@@ -56,7 +56,7 @@ class GetUser(G3WAPIView):
             "username": user.username,
             "email": user.email,
             "is_superuser": user.is_superuser,
-            "is_admin": user.is_admin,
+            "is_staff": user.is_staff,
             "first_name": user.first_name,
             "last_name": user.last_name
         }
